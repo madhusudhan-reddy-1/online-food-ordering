@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | FoodieBite Management</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+</head>
+<body style="background:#f8fafc;">
+
+  <!-- Admin Layout Wrapper -->
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <a th:href="@{/}" href="/" class="logo" style="color:white;">
+        <div class="logo-icon"><i class="fa-solid fa-utensils"></i></div>
+        <span>Foodie<strong>Bite</strong></span>
+      </a>
+      <div style="font-size:0.75rem; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-top:4px;">
+        Admin Control Panel (Spring Boot)
+      </div>
+
+      <ul class="admin-nav">
+        <li class="admin-nav-item active" data-tab="orders">
+          <i class="fa-solid fa-receipt"></i>
+          <span>Orders Management</span>
+        </li>
+        <li class="admin-nav-item" data-tab="foods">
+          <i class="fa-solid fa-burger"></i>
+          <span>Menu Catalog</span>
+        </li>
+      </ul>
+
+      <div style="margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <div style="width:36px; height:36px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:800;">A</div>
+          <div>
+            <div style="font-size:0.85rem; font-weight:700;" id="admin-user-name">Admin Manager</div>
+            <div style="font-size:0.75rem; color:#94a3b8;">admin@foodie.com</div>
+          </div>
+        </div>
+
+        <a th:href="@{/}" href="/" style="display:flex; align-items:center; gap:10px; padding:10px; color:#cbd5e1; font-size:0.85rem; font-weight:600; transition:var(--transition);">
+          <i class="fa-solid fa-store"></i> Return to Storefront
+        </a>
+
+        <button onclick="Auth.logout()" style="display:flex; align-items:center; gap:10px; padding:10px; color:#f87171; font-size:0.85rem; font-weight:600; width:100%;">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="admin-main">
+      <!-- Admin Auth Notification Banner (shown if logged out) -->
+      <div id="admin-auth-notice" style="display:none; background:#fffbeb; border:1px solid #fde68a; padding:16px 20px; border-radius:var(--radius-md); margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <i class="fa-solid fa-triangle-exclamation" style="color:#d97706; font-size:1.3rem;"></i>
+            <div>
+              <strong style="color:#92400e;">You are viewing as Guest / Demo Mode</strong>
+              <div style="font-size:0.85rem; color:#b45309;">To gain full administrative control, sign in with the admin account.</div>
+            </div>
+          </div>
+          <button class="btn-primary" style="padding:8px 18px; font-size:0.85rem;" onclick="Admin.quickAdminLogin()">
+            <i class="fa-solid fa-key"></i> 1-Click Sign In as Admin
+          </button>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size:1.8rem; font-weight:800; color:var(--secondary);">Restaurant Operations</h1>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Real-time order statuses, kitchen workflow, and MySQL menu inventory.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a th:href="@{/}" href="/" target="_blank" class="btn-secondary" style="padding:10px 18px; font-size:0.85rem;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Shop
+          </a>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Cards (Thymeleaf Server-Rendered & JS Refreshed) -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3 id="stat-revenue" th:text="'$' + ${#numbers.formatDecimal(stats.totalRevenue, 1, 2)}">$0.00</h3>
+            <p>Total Revenue</p>
+          </div>
+          <div class="kpi-icon green"><i class="fa-solid fa-chart-line"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3 id="stat-orders" th:text="${stats.totalOrders}">0</h3>
+            <p>Total Orders</p>
+          </div>
+          <div class="kpi-icon blue"><i class="fa-solid fa-receipt"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3 id="stat-active" th:text="${stats.activeOrders}">0</h3>
+            <p>Active Orders</p>
+          </div>
+          <div class="kpi-icon orange"><i class="fa-solid fa-fire-burner"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3 id="stat-foods" th:text="${stats.totalFoods}">0</h3>
+            <p>Menu Dishes</p>
+          </div>
+          <div class="kpi-icon purple"><i class="fa-solid fa-utensils"></i></div>
+        </div>
+      </div>
+
+      <!-- ==========================================================
+           TAB 1: ORDERS MANAGEMENT PANE
+           ========================================================== -->
+      <div class="admin-tab-pane" id="tab-pane-orders">
+        <div class="data-card">
+          <div class="data-card-header">
+            <div>
+              <h3 style="font-size:1.15rem; font-weight:800; color:var(--secondary);">Live Customer Orders</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Manage incoming requests and update order progress.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <label style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">Filter by Status:</label>
+              <select id="order-status-filter" class="form-control" style="width:160px; padding:8px 12px; font-size:0.85rem;">
+                <option value="all">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Preparing">Preparing</option>
+                <option value="Out for Delivery">Out for Delivery</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID & Date</th>
+                  <th>Customer Info</th>
+                  <th>Delivery Address</th>
+                  <th>Items Ordered</th>
+                  <th>Total & Payment</th>
+                  <th>Current Status</th>
+                  <th>Update Status</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body">
+                <tr th:each="order : ${orders}">
+                  <td>
+                    <strong style="color:var(--secondary);" th:text="${order.id}">ORD-XXXX</strong>
+                    <div style="font-size:0.75rem; color:var(--text-muted);"
+                         th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm')}">Date</div>
+                  </td>
+                  <td>
+                    <strong th:text="${order.customerName}">Name</strong>
+                    <div style="font-size:0.75rem; color:var(--text-muted);" th:text="${order.customerPhone}">Phone</div>
+                  </td>
+                  <td style="max-width:240px;">
+                    <div style="font-size:0.8rem; line-height:1.4;" th:text="${order.deliveryAddress}">Address</div>
+                    <div th:if="${order.notes != null and !#strings.isEmpty(order.notes)}"
+                         style="font-size:0.75rem; color:var(--primary); font-style:italic;"
+                         th:text="'Note: ' + ${order.notes}">Note</div>
+                  </td>
+                  <td>
+                    <div style="font-size:0.85rem;">
+                      <span th:each="item, stat : ${order.items}">
+                        <span style="font-weight:600;" th:text="${item.quantity} + 'x ' + ${item.name}">Item</span>
+                        <br th:if="${!stat.last}">
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <strong style="color:var(--secondary); font-size:0.95rem;">$<span th:text="${#numbers.formatDecimal(order.total, 1, 2)}">0.00</span></strong>
+                    <div style="font-size:0.75rem; color:var(--text-muted);" th:text="${order.paymentMethod} + ' (' + ${order.paymentStatus} + ')'">Payment</div>
+                  </td>
+                  <td>
+                    <span th:class="'status-badge ' + ${#strings.toLowerCase(#strings.replace(order.status, ' ', '-'))}"
+                          th:text="${order.status}">Status</span>
+                  </td>
+                  <td>
+                    <select class="form-control" style="padding:6px 10px; font-size:0.8rem;"
+                            th:onchange="'Admin.updateOrderStatus(\'' + ${order.id} + '\', this.value)'">
+                      <option value="Pending" th:selected="${order.status == 'Pending'}">Pending</option>
+                      <option value="Preparing" th:selected="${order.status == 'Preparing'}">Preparing</option>
+                      <option value="Out for Delivery" th:selected="${order.status == 'Out for Delivery'}">Out for Delivery</option>
+                      <option value="Delivered" th:selected="${order.status == 'Delivered'}">Delivered</option>
+                      <option value="Cancelled" th:selected="${order.status == 'Cancelled'}">Cancelled</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================
+           TAB 2: FOOD MENU CATALOG MANAGEMENT PANE
+           ========================================================== -->
+      <div class="admin-tab-pane" id="tab-pane-foods" style="display:none;">
+        <div class="data-card">
+          <div class="data-card-header">
+            <div>
+              <h3 style="font-size:1.15rem; font-weight:800; color:var(--secondary);">Food Items Catalog</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Add, edit, or adjust pricing & stock for any dish.</p>
+            </div>
+            <button class="btn-primary" style="padding:10px 20px; font-size:0.9rem;" onclick="Admin.openAddFoodModal()">
+              <i class="fa-solid fa-plus"></i> Add New Dish
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Dish Name & Details</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="foods-table-body">
+                <tr th:each="food : ${foods}">
+                  <td>
+                    <img th:src="${food.image}" th:alt="${food.name}" style="width:48px; height:48px; border-radius:8px; object-fit:cover;"
+                         onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80'">
+                  </td>
+                  <td>
+                    <strong th:text="${food.name}">Name</strong>
+                    <div style="font-size:0.75rem; color:var(--text-muted);"
+                         th:text="${food.badge != null ? '[' + food.badge + '] ' : ''} + ${#strings.abbreviate(food.description, 50)}">Description</div>
+                  </td>
+                  <td>
+                    <span style="text-transform:capitalize; font-weight:600; color:var(--text-muted);" th:text="${food.category}">Category</span>
+                    <div><span th:class="'diet-indicator ' + ${food.dietary}" style="display:inline-block; position:static; margin-top:4px;"></span> <span style="font-size:0.75rem;" th:text="${food.dietary}">diet</span></div>
+                  </td>
+                  <td>
+                    <strong style="color:var(--secondary);">$<span th:text="${#numbers.formatDecimal(food.price, 1, 2)}">12.99</span></strong>
+                  </td>
+                  <td>
+                    <span style="font-weight:700;" th:styleappend="${food.available} ? 'color:var(--accent);' : 'color:var(--danger);'">
+                      <i th:class="${food.available} ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"></i>
+                      <span th:text="${food.available} ? 'In Stock' : 'Out of Stock'">In Stock</span>
+                    </span>
+                  </td>
+                  <td>
+                    <div style="display:flex; gap:8px;">
+                      <button class="btn-secondary" style="padding:6px 12px; font-size:0.8rem;" th:onclick="'Admin.openEditFoodModal(\'' + ${food.id} + '\')'" title="Edit Item">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                      </button>
+                      <button class="btn-secondary" style="padding:6px 12px; font-size:0.8rem; color:var(--danger); border-color:#fee2e2;" th:onclick="'Admin.deleteFood(\'' + ${food.id} + '\')'" title="Delete Item">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================================
+       ADD / EDIT FOOD ITEM MODAL
+       ========================================================== -->
+  <div class="modal-overlay" id="food-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="food-modal-title">Add New Dish</h3>
+        <button class="close-btn" onclick="Admin.closeFoodModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="food-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Dish Name *</label>
+              <input type="text" id="food-name" class="form-control" placeholder="e.g. Smoky BBQ Chicken Pizza" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select id="food-category" class="form-control" required>
+                <option value="pizza">Pizza</option>
+                <option value="burgers">Burgers</option>
+                <option value="pasta">Pasta</option>
+                <option value="asian">Asian Dishes</option>
+                <option value="desserts">Desserts</option>
+                <option value="beverages">Beverages</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Price ($) *</label>
+              <input type="number" step="0.01" id="food-price" class="form-control" placeholder="12.99" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Rating (1.0 to 5.0)</label>
+              <input type="number" step="0.1" min="1" max="5" id="food-rating" class="form-control" value="4.8">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Dietary Type *</label>
+              <select id="food-dietary" class="form-control">
+                <option value="veg">Vegetarian</option>
+                <option value="non-veg">Non-Vegetarian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimated Prep Time</label>
+              <input type="text" id="food-preptime" class="form-control" placeholder="20-25 mins" value="20-25 mins">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Promotional Badge (Optional)</label>
+            <input type="text" id="food-badge" class="form-control" placeholder="e.g. Best Seller, Chef Special, Popular">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input type="url" id="food-image" class="form-control" placeholder="https://images.unsplash.com/photo-..." value="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="food-desc" class="form-control" rows="3" placeholder="Appetizing description of ingredients and flavors..."></textarea>
+          </div>
+
+          <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="food-available" checked style="width:18px; height:18px;">
+            <label for="food-available" style="font-weight:700; font-size:0.85rem; cursor:pointer;">Available in stock for ordering</label>
+          </div>
+
+          <button type="submit" class="btn-checkout" style="margin-top:16px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Dish to Menu
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+  <script th:src="@{/js/admin.js}" src="/js/admin.js"></script>
+</body>
+</html>

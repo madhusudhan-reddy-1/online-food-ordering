@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodieBite | Delicious Food Delivered Fast & Fresh</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================================
+       NAVIGATION BAR
+       ========================================================== -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a th:href="@{/}" href="/" class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-utensils"></i></div>
+        <span>Foodie<strong>Bite</strong></span>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a th:href="@{/}" href="/" class="active">Home</a></li>
+        <li><a href="#menu">Our Menu</a></li>
+        <li><a href="#features">Why Us</a></li>
+        <li><a href="javascript:void(0)" onclick="App.openOrdersModal()"><i class="fa-solid fa-receipt"></i> My Orders</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Cart Trigger Button -->
+        <button class="cart-btn" id="cart-toggle-btn" title="View Cart">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Cart</span>
+          <span class="cart-badge" id="cart-badge-count" style="display:none;">0</span>
+        </button>
+
+        <!-- User / Auth Profile Button (Synchronized via auth.js) -->
+        <div id="user-nav-action">
+          <a th:href="@{/login}" href="/login" class="user-btn">
+            <i class="fa-solid fa-user"></i>
+            <span>Sign In</span>
+          </a>
+        </div>
+
+        <!-- Mobile Nav Hamburger -->
+        <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================
+       HERO BANNER SECTION
+       ========================================================== -->
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="promo-pill">
+          <i class="fa-solid fa-bolt"></i> Free Delivery On Orders Above $30!
+        </div>
+        <h1 class="hero-title">
+          Hot & Fresh Meals Delivered To <span>Your Door</span>
+        </h1>
+        <p class="hero-description">
+          Craving authentic gourmet pizza, juicy smash burgers, artisanal pastas, or mouthwatering desserts? Order now and enjoy hot restaurant-quality food delivered in under 30 minutes!
+        </p>
+
+        <div class="hero-actions">
+          <a href="#menu" class="btn-primary">
+            <i class="fa-solid fa-bowl-food"></i> Explore Menu
+          </a>
+          <button class="btn-secondary" onclick="App.openOrdersModal()">
+            <i class="fa-solid fa-location-dot"></i> Track Order
+          </button>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h3>30 min</h3>
+            <p>Guaranteed Fast Delivery</p>
+          </div>
+          <div class="stat-item">
+            <h3>5,000+</h3>
+            <p>Happy Foodies Served</p>
+          </div>
+          <div class="stat-item">
+            <h3>4.9 ★</h3>
+            <p>Customer Satisfaction</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop&q=80" alt="Delicious Food Feast" class="hero-main-img">
+        <div class="hero-badge-card">
+          <div class="badge-icon"><i class="fa-solid fa-truck-fast"></i></div>
+          <div class="badge-text">
+            <h4>Fast Courier</h4>
+            <p>Arriving in ~25 mins</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       FEATURES / VALUE PROPOSITION SECTION
+       ========================================================== -->
+  <section class="features-section" id="features">
+    <div class="container features-grid">
+      <div class="feature-box">
+        <div class="feature-icon"><i class="fa-solid fa-clock"></i></div>
+        <div class="feature-text">
+          <h4>Ultra Fast Delivery</h4>
+          <p>Freshly cooked and dispatched with speed straight to your table.</p>
+        </div>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon"><i class="fa-solid fa-leaf"></i></div>
+        <div class="feature-text">
+          <h4>Fresh Ingredients</h4>
+          <p>100% farm-sourced fresh produce and premium kitchen recipes.</p>
+        </div>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="feature-text">
+          <h4>Safe & Contactless</h4>
+          <p>Hygienic prep and sealed food packaging for maximum safety.</p>
+        </div>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon"><i class="fa-solid fa-tags"></i></div>
+        <div class="feature-text">
+          <h4>Best Price & Deals</h4>
+          <p>Use promo code <strong>FOODIE20</strong> for instant 20% discount!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       MENU CATALOG, SEARCH & FILTERS SECTION
+       ========================================================== -->
+  <section class="menu-section" id="menu">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">Our Delicious Selection</span>
+        <h2 class="section-title">Explore Our Chef's Specialties</h2>
+        <p class="section-description">Filter by cuisine, search your favorite cravings, or pick from our bestsellers.</p>
+      </div>
+
+      <!-- Controls Toolbar: Live Search, Dietary Filters, Sorting -->
+      <div class="filter-toolbar">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="search-input" class="search-input" placeholder="Search dishes by name, ingredients, or cuisine...">
+        </div>
+
+        <div class="toolbar-controls">
+          <!-- Dietary Switcher -->
+          <div class="dietary-filters">
+            <button class="diet-btn active" data-diet="all">All</button>
+            <button class="diet-btn" data-diet="veg"><i class="fa-solid fa-leaf" style="color:#10b981;"></i> Veg Only</button>
+            <button class="diet-btn" data-diet="non-veg"><i class="fa-solid fa-drumstick-bite" style="color:#ef4444;"></i> Non-Veg</button>
+          </div>
+
+          <!-- Sort Dropdown -->
+          <select id="sort-select" class="sort-select">
+            <option value="popular">Sort: Featured</option>
+            <option value="rating">Sort: Highest Rated</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Category Navigation Pills (Thymeleaf Loop & Dynamic JS) -->
+      <div class="category-scroll" id="categories-container">
+        <button th:each="cat : ${categories}"
+                th:classappend="${cat.id == 'all'} ? 'active' : ''"
+                th:data-category="${cat.id}"
+                class="cat-pill">
+          <i th:class="'fa-solid ' + ${cat.icon != null ? cat.icon : 'fa-utensils'}"></i>
+          <span th:text="${cat.name}">Category</span>
+        </button>
+      </div>
+
+      <!-- Food Items Grid (Thymeleaf Pre-rendered & Dynamic Client-side Filterable) -->
+      <div class="foods-grid" id="foods-grid">
+        <div th:each="dish : ${foods}" class="food-card" th:data-id="${dish.id}">
+          <div class="food-card-img-wrapper">
+            <img th:src="${dish.image}" th:alt="${dish.name}" class="food-card-img" loading="lazy"
+                 onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80'">
+            <span th:if="${dish.badge != null and !#strings.isEmpty(dish.badge)}"
+                  th:text="${dish.badge}" class="food-badge">Badge</span>
+            <div th:class="'diet-indicator ' + ${dish.dietary}"
+                 th:title="${dish.dietary == 'veg' ? 'Vegetarian' : 'Non-Vegetarian'}"></div>
+          </div>
+          <div class="food-card-body">
+            <div class="food-card-header">
+              <span class="food-category-tag" th:text="${dish.category}">category</span>
+              <span class="food-rating">
+                <i class="fa-solid fa-star"></i>
+                <span th:text="${#numbers.formatDecimal(dish.rating, 1, 1)}">4.8</span>
+              </span>
+            </div>
+            <h3 class="food-title" th:text="${dish.name}">Dish Name</h3>
+            <p class="food-desc" th:text="${dish.description}">Appetizing description...</p>
+            <div class="food-meta">
+              <span><i class="fa-regular fa-clock"></i> <span th:text="${dish.prepTime}">20 mins</span></span>
+              <span><i class="fa-solid fa-fire"></i> Chef Made</span>
+            </div>
+            <div class="food-card-footer">
+              <div class="food-price">$<span th:text="${#numbers.formatDecimal(dish.price, 1, 2)}">12.99</span></div>
+              <button class="btn-add-cart" th:onclick="'App.addToCart(\'' + ${dish.id} + '\')'">
+                <i class="fa-solid fa-plus"></i> Add
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE-OVER CART DRAWER
+       ========================================================== -->
+  <div class="cart-drawer-overlay" id="cart-drawer-overlay">
+    <div class="cart-drawer">
+      <div class="cart-header">
+        <h3><i class="fa-solid fa-bag-shopping" style="color:var(--primary);"></i> Your Cart</h3>
+        <button class="close-btn" id="cart-close-btn" aria-label="Close Cart"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="cart-body">
+        <!-- Empty Cart View -->
+        <div class="empty-cart-view" id="empty-cart-view">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <h4>Your cart is empty</h4>
+          <p>Looks like you haven't added any appetizing meals yet.</p>
+          <button class="btn-primary" onclick="App.toggleCartDrawer(false)">Start Browsing</button>
+        </div>
+
+        <!-- Populated Cart Items -->
+        <div id="cart-items-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <div class="cart-footer" id="cart-drawer-footer" style="display:none;">
+        <!-- Coupon Code Box -->
+        <div class="coupon-box">
+          <input type="text" id="coupon-code-input" class="coupon-input" placeholder="Promo code (e.g. FOODIE20)">
+          <button class="btn-apply-coupon" id="btn-apply-coupon">Apply</button>
+        </div>
+
+        <!-- Active Coupon Tag -->
+        <div id="coupon-applied-tag" class="coupon-applied-tag" style="display:none;"></div>
+
+        <!-- Pricing Totals Breakdown -->
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span>Subtotal</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <div class="price-row discount-row" id="cart-discount-row" style="display:none;">
+            <span>Coupon Discount</span>
+            <span id="cart-discount">-$0.00</span>
+          </div>
+          <div class="price-row">
+            <span>Estimated Tax (5%)</span>
+            <span id="cart-tax">$0.00</span>
+          </div>
+          <div class="price-row">
+            <span>Delivery Fee</span>
+            <span id="cart-delivery">$2.99</span>
+          </div>
+          <div class="price-row total-row">
+            <span>Grand Total</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+        </div>
+
+        <button class="btn-checkout" id="btn-proceed-checkout">
+          <span>Proceed to Checkout</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       CHECKOUT MODAL
+       ========================================================== -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-truck-ramp-box" style="color:var(--primary);"></i> Complete Your Order</h3>
+        <button class="close-btn" id="close-checkout-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="checkout-form">
+          <h4 style="margin-bottom:12px; font-size:0.95rem; color:var(--secondary);">1. Contact & Customer Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="checkout-name" class="form-control" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number *</label>
+              <input type="tel" id="checkout-phone" class="form-control" placeholder="+1 (555) 000-0000" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address (for order receipts)</label>
+            <input type="email" id="checkout-email" class="form-control" placeholder="john@example.com">
+          </div>
+
+          <h4 style="margin:16px 0 12px; font-size:0.95rem; color:var(--secondary);">2. Delivery Location</h4>
+          <div class="form-group">
+            <label class="form-label">Street Address *</label>
+            <input type="text" id="checkout-address" class="form-control" placeholder="123 Delicious Lane, Apt 4B" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">City *</label>
+              <input type="text" id="checkout-city" class="form-control" placeholder="Springfield" value="Springfield" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Postal / Zip Code</label>
+              <input type="text" id="checkout-zip" class="form-control" placeholder="62704" value="62704">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Special Delivery Instructions (Optional)</label>
+            <textarea id="checkout-notes" class="form-control" rows="2" placeholder="e.g., Leave on doorstep, call on arrival, extra napkins..."></textarea>
+          </div>
+
+          <h4 style="margin:16px 0 12px; font-size:0.95rem; color:var(--secondary);">3. Select Payment Method</h4>
+          <div class="payment-options">
+            <label class="payment-option-card selected">
+              <input type="radio" name="payment-method" value="Cash on Delivery" checked style="display:none;">
+              <i class="fa-solid fa-money-bill-wave"></i>
+              <span>Cash on Delivery</span>
+            </label>
+            <label class="payment-option-card">
+              <input type="radio" name="payment-method" value="Credit / Debit Card" style="display:none;">
+              <i class="fa-solid fa-credit-card"></i>
+              <span>Credit / Card</span>
+            </label>
+            <label class="payment-option-card">
+              <input type="radio" name="payment-method" value="UPI / Online QR" style="display:none;">
+              <i class="fa-solid fa-qrcode"></i>
+              <span>UPI / Instant</span>
+            </label>
+          </div>
+
+          <!-- Order Summary Mini Box -->
+          <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:14px; margin-top:20px;">
+            <div style="font-weight:700; font-size:0.85rem; color:var(--secondary); margin-bottom:8px;">Order Summary:</div>
+            <div id="checkout-summary-items"></div>
+            <div style="display:flex; justify-content:space-between; border-top:1px dashed var(--border-color); padding-top:8px; margin-top:8px; font-weight:800;">
+              <span>Total Payable</span>
+              <span id="checkout-final-total" style="color:var(--primary); font-size:1.1rem;">$0.00</span>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-order" class="btn-checkout" style="margin-top:20px;">
+            <i class="fa-solid fa-check"></i> Complete & Place Order
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       LIVE ORDER TRACKER MODAL
+       ========================================================== -->
+  <div class="modal-overlay" id="tracker-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-route" style="color:var(--primary);"></i> Live Order Tracking</h3>
+        <button class="close-btn" onclick="App.closeOrderTracker()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="tracker-status-box">
+          <div class="tracker-status-header">
+            <div>
+              <div style="font-size:0.8rem; color:#94a3b8;">ORDER IDENTIFIER</div>
+              <strong id="tracker-order-id" style="font-size:1.15rem; color:white;">ORD-XXXX</strong>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.8rem; color:#94a3b8;">ESTIMATED TIME</div>
+              <div class="eta-time" id="tracker-eta">~25 Mins</div>
+            </div>
+          </div>
+
+          <div class="tracker-steps">
+            <div class="step-item" id="step-pending">
+              <div class="step-icon"><i class="fa-solid fa-receipt"></i></div>
+              <div class="step-label">Received</div>
+            </div>
+            <div class="step-item" id="step-preparing">
+              <div class="step-icon"><i class="fa-solid fa-fire-burner"></i></div>
+              <div class="step-label">Preparing</div>
+            </div>
+            <div class="step-item" id="step-out">
+              <div class="step-icon"><i class="fa-solid fa-motorcycle"></i></div>
+              <div class="step-label">On The Way</div>
+            </div>
+            <div class="step-item" id="step-delivered">
+              <div class="step-icon"><i class="fa-solid fa-house-chimney"></i></div>
+              <div class="step-label">Delivered</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:16px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span style="font-size:0.85rem; color:var(--text-muted);">Current Status:</span>
+            <span id="tracker-current-status" class="status-badge pending">Pending</span>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="font-size:0.8rem; color:var(--text-muted);">Delivery Address:</div>
+            <div id="tracker-address" style="font-weight:600; font-size:0.9rem;">-</div>
+          </div>
+          <div>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">Items in this order:</div>
+            <ul id="tracker-items-list" style="list-style:none;"></ul>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-color); margin-top:10px; padding-top:8px;">
+            <strong>Total Paid:</strong>
+            <strong id="tracker-total" style="color:var(--primary);">$0.00</strong>
+          </div>
+        </div>
+
+        <button class="btn-primary" style="width:100%; margin-top:18px; justify-content:center;" onclick="App.closeOrderTracker()">
+          Done & Return to Menu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       "MY ORDERS" MODAL
+       ========================================================== -->
+  <div class="modal-overlay" id="my-orders-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary);"></i> My Order History</h3>
+        <button class="close-btn" onclick="App.closeOrdersModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="my-orders-list">
+        <!-- Rendered via App.openOrdersModal() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       FOOTER
+       ========================================================== -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a th:href="@{/}" href="/" class="logo">
+          <div class="logo-icon"><i class="fa-solid fa-utensils"></i></div>
+          <span>Foodie<strong>Bite</strong></span>
+        </a>
+        <p>Your favorite restaurant dishes, prepared by passionate chefs and delivered piping hot to your doorstep with guaranteed freshness.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Popular Cuisines</h4>
+        <ul>
+          <li><a href="#menu">Stone-baked Pizza</a></li>
+          <li><a href="#menu">Gourmet Burgers</a></li>
+          <li><a href="#menu">Artisan Pastas</a></li>
+          <li><a href="#menu">Asian Wok & Curries</a></li>
+          <li><a href="#menu">Desserts & Shakes</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="javascript:void(0)" onclick="App.openOrdersModal()">Track My Order</a></li>
+          <li><a th:href="@{/login}" href="/login">My Account</a></li>
+          <li><a th:href="@{/admin}" href="/admin">Admin Portal</a></li>
+          <li><a href="#features">Delivery & FAQs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Operating Hours</h4>
+        <ul>
+          <li><span style="color:#94a3b8;">Mon - Thu:</span> 10:00 AM - 11:00 PM</li>
+          <li><span style="color:#94a3b8;">Fri - Sun:</span> 10:00 AM - 12:00 Midnight</li>
+          <li style="margin-top:10px;"><i class="fa-solid fa-phone" style="color:var(--primary);"></i> +1 (555) 987-6543</li>
+          <li><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> support@foodiebite.com</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; 2026 FoodieBite Inc. All rights reserved. Crafted with care for food lovers.</p>
+      <div style="display:flex; gap:16px;">
+        <a th:href="@{/login}" href="/login" style="color:#94a3b8;">Customer Login</a>
+        <a th:href="@{/admin}" href="/admin" style="color:#94a3b8;">Restaurant Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>
